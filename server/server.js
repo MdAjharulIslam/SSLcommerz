@@ -7,6 +7,8 @@ import orderRoute from "./routes/orderRoute.js"
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 await connectDB()
  const PORT = 4000;
@@ -16,7 +18,7 @@ await connectDB()
 app.get('/', (req, res)=>{
     res.send("server is running")
 })
-app.use('/api/order/', orderRoute)
+app.use('/api/payment', orderRoute)
 
 app.listen(PORT, ()=>{
     console.log(`server is running on port ${PORT}`)

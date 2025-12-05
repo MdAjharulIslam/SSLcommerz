@@ -8,7 +8,7 @@ const InputPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:4000/api/order/init", {
+      const res = await fetch("http://localhost:4000/api/payment/init", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,9 +18,10 @@ const InputPage = () => {
 
       const data = await res.json();
       console.log("Server response:", data);
-        if (data.url) {
-      window.location.href = data.url;
-    }
+      console.log({name, amount})
+         if (data.url) {
+       window.location.href = data.url;
+     }
     } catch (error) {
       console.error("Error:", error);
     }

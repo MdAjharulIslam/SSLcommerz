@@ -8,11 +8,12 @@ const is_live = process.env.SSLC_IS_LIVE === "false";
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
 export const initPayment = async (req, res) => {
-  const { amount, name, email, phone } = req.body;
+  const { amount, name } = req.body;
 
   const tran_id = "TXN_" + Date.now();
-
-  await Order.create({
+  const email = "a@gmail.com";
+  const phone = "0179845445";
+ await Order.create({
     tran_id,
     amount,
     name,
@@ -45,8 +46,8 @@ export const initPayment = async (req, res) => {
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
   const apiResponse = await sslcz.init(data);
 
-  if (apiResponse.GatewayPageURl) {
-    res.json({ url: apiResponse.GatewayPageURl });
+  if (apiResponse.GatewayPageURL) {
+    res.json({ url: apiResponse.GatewayPageURL });
   } else {
     res.status(500).json({ error: "SSLCommerz Failed!" });
   }

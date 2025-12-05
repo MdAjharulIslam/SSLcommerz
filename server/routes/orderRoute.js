@@ -1,5 +1,5 @@
 import express from "express";
-import { initPayment, success, fail, cancel } from "../controllers/paymentController.js";
+import { initPayment, success, fail, cancel } from "../controller/orderController.js";
 
 const orderRouter = express.Router();
 
