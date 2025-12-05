@@ -50,22 +50,35 @@ export const initPayment = async (req, res) => {
   }
 };
 
-export const success = async (req, res) => {
+// export const success = async (req, res) => {
+//   try {
+//     const tran_id = req.body.tran_id;
+
+//     await Order.findOneAndUpdate(
+//       { tran_id },
+//       { status: "PAID" }
+//     );
+
+//     return res.redirect(`${FRONTEND_URL}/success?payment=success`);
+//   } catch (err) {
+//     console.log(err);
+//     res.redirect(`${FRONTEND_URL}/fail`);
+//   }
+// };
+
+
+export const success = async(req, res)=>{
   try {
     const tran_id = req.body.tran_id;
-
     await Order.findOneAndUpdate(
-      { tran_id },
-      { status: "PAID" }
-    );
-
-    return res.redirect(`${FRONTEND_URL}/success?payment=success`);
-  } catch (err) {
-    console.log(err);
-    res.redirect(`${FRONTEND_URL}/fail`);
+      {tran_id},
+      {status:"PAID"}
+    )
+    return res.redirect(`${FRONTEND_URL}/success`);
+  } catch (error) {
+    console.error(error.message)
   }
-};
-
+}
 
 export const fail = async (req, res) => {
   const tran_id = req.body.tran_id;
