@@ -1,19 +1,17 @@
 import express from "express";
 import Order from "../model/Order.js";
-
+import SSLCommerzPayment from "sslcommerz-lts";
 
 const store_id = process.env.SSLC_STORE_ID;
 const store_passwd = process.env.SSLC_STORE_PASSWORD;
-const is_live = process.env.SSLC_IS_LIVE === "true";
+const is_live = process.env.SSLC_IS_LIVE === "false";
 const FRONTEND_URL = process.env.FRONTEND_URL;
-
 
 export const initPayment = async (req, res) => {
   const { amount, name, email, phone } = req.body;
 
   const tran_id = "TXN_" + Date.now();
 
-  
   await Order.create({
     tran_id,
     amount,
@@ -23,7 +21,6 @@ export const initPayment = async (req, res) => {
     status: "PENDING",
   });
 
-  
   const data = {
     total_amount: amount,
     currency: "BDT",
@@ -40,11 +37,16 @@ export const initPayment = async (req, res) => {
     cus_phone: phone,
   };
 
+  // const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+  // const apiResponse = await sslcz.init(data);
+  // if (apiResponse.GatewayPageURL) {
+  //   res.json({ url: apiResponse.GatewayPageURL });
+  // }
   const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
   const apiResponse = await sslcz.init(data);
 
-  if (apiResponse.GatewayPageURL) {
-    res.json({ url: apiResponse.GatewayPageURL });
+  if (apiResponse.GatewayPageURl) {
+    res.json({ url: apiResponse.GatewayPageURl });
   } else {
     res.status(500).json({ error: "SSLCommerz Failed!" });
   }
@@ -66,39 +68,28 @@ export const initPayment = async (req, res) => {
 //   }
 // };
 
-
-export const success = async(req, res)=>{
+export const success = async (req, res) => {
   try {
     const tran_id = req.body.tran_id;
-    await Order.findOneAndUpdate(
-      {tran_id},
-      {status:"PAID"}
-    )
+    await Order.findOneAndUpdate({ tran_id }, { status: "PAID" });
     return res.redirect(`${FRONTEND_URL}/success`);
   } catch (error) {
-    console.error(error.message)
+    console.error(error.message);
   }
-}
+};
 
 export const fail = async (req, res) => {
   const tran_id = req.body.tran_id;
 
-  await Order.findOneAndUpdate(
-    { tran_id },
-    { status: "FAILED" }
-  );
+  await Order.findOneAndUpdate({ tran_id }, { status: "FAILED" });
 
   return res.redirect(`${FRONTEND_URL}/fail`);
 };
 
-
 export const cancel = async (req, res) => {
   const tran_id = req.body.tran_id;
 
-  await Order.findOneAndUpdate(
-    { tran_id },
-    { status: "CANCELED" }
-  );
+  await Order.findOneAndUpdate({ tran_id }, { status: "CANCELED" });
 
   return res.redirect(`${FRONTEND_URL}/cancel`);
 };
